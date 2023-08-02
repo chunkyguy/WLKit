@@ -6,16 +6,21 @@ import UIKit
 public typealias OSView = UIView
 #endif
 
+/// Any event
 public protocol ViewEvent {}
 
+/// Any event handler
 public protocol ViewEventHandler: AnyObject {
   func handle(event: ViewEvent, sender: OSView?)
 }
 
-public class EventView: OSView {
+/// Any view that can emit event
+open class EventView: OSView {
   public weak var eventHandler: ViewEventHandler? {
     didSet {
-      subviews.forEach { ($0 as? EventView)?.eventHandler = eventHandler }
+      subviews.forEach { (
+        $0 as? EventView)?.eventHandler = eventHandler
+      }
     }
   }
   
@@ -29,7 +34,8 @@ public class EventView: OSView {
   }
 }
 
-public class View<ViewModel>: EventView {
+/// Any view with a view model
+open class View<ViewModel>: EventView {
   public var viewModel: ViewModel {
     didSet {
       if isSetUp {
@@ -80,3 +86,42 @@ public class View<ViewModel>: EventView {
   
   open func viewModelDidUpdate() {}
 }
+
+#if !os(macOS)
+private let contentViewBindableTag = Int.max
+
+/// Any view type that if provides a contentView get a view that fills the content
+public protocol ContentViewBindable {
+  var contentView: UIView { get }
+}
+
+extension ContentViewBindable {
+  /// When set replaces the content
+  public var view: UIView? {
+    get { contentView.viewWithTag(contentViewBindableTag) }
+    
+    set {
+      if let oldView = contentView.viewWithTag(contentViewBindableTag) {
+        oldView.removeFromSuperview()
+      }
+      
+      if let newView = newValue {
+        VFL(contentView)
+          .add(subview: newView, name: "view")
+          .applyConstraints(formats: ["H:|[view]|", "V:|[view]|"])
+        newView.tag = contentViewBindableTag
+      }
+    }
+  }
+}
+
+open class ContainerView: UIView, ContentViewBindable {
+  public var contentView: UIView { self }
+}
+open class TableViewCell: UITableViewCell, ContentViewBindable {}
+open class TableViewHeaderFooterView: UITableViewHeaderFooterView, ContentViewBindable {}
+open class CollectionCell: UICollectionViewCell, ContentViewBindable {}
+open class CollectionReusableView: UICollectionReusableView, ContentViewBindable {
+  public var contentView: UIView { self }
+}
+#endif
