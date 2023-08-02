@@ -91,7 +91,7 @@ open class View<ViewModel>: EventView {
 private let contentViewBindableTag = Int.max
 
 /// Any view type that if provides a contentView get a view that fills the content
-public protocol ContentViewBindable {
+public protocol ContentViewBindable: AnyObject {
   var contentView: UIView { get }
 }
 
