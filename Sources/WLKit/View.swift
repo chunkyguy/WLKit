@@ -79,6 +79,7 @@ open class View<ViewModel>: EventView {
     if !isSetUp {
       isSetUp = true
       setUp()
+      viewModelDidUpdate()
     }
   }
   
