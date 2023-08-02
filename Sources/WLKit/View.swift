@@ -32,6 +32,11 @@ open class EventView: OSView {
   public required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+  
+  open override func didAddSubview(_ subview: UIView) {
+    super.didAddSubview(subview)
+    (subview as? EventView)?.eventHandler = eventHandler
+  }
 }
 
 /// Any view with a view model
