@@ -18,8 +18,8 @@ public protocol ViewEventHandler: AnyObject {
 open class EventView: OSView {
   public weak var eventHandler: ViewEventHandler? {
     didSet {
-      subviews.forEach { (
-        $0 as? EventView)?.eventHandler = eventHandler
+      subviews.forEach {
+        ($0 as? EventView)?.eventHandler = eventHandler
       }
     }
   }
