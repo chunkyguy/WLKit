@@ -18,9 +18,7 @@ public protocol ViewEventHandler: AnyObject {
 open class EventView: OSView {
   public weak var eventHandler: ViewEventHandler? {
     didSet {
-      subviews.forEach {
-        ($0 as? EventView)?.eventHandler = eventHandler
-      }
+      subviews.forEach { forwardEventHandlerToSubview($0) }
     }
   }
   
@@ -35,7 +33,13 @@ open class EventView: OSView {
   
   open override func didAddSubview(_ subview: UIView) {
     super.didAddSubview(subview)
-    (subview as? EventView)?.eventHandler = eventHandler
+    forwardEventHandlerToSubview(subview)
+  }
+  
+  private func forwardEventHandlerToSubview(_ subview: UIView) {
+    guard let eventVw = subview as? EventView else { return }
+    guard eventVw.eventHandler == nil else { return }
+    eventVw.eventHandler = eventHandler
   }
 }
 
