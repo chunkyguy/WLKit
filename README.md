@@ -65,3 +65,11 @@ VFL(self)
 ### Read More
 1. [Introducing VFL](https://whackylabs.com/swift/uikit/layout/2023/07/01/introducing-vfl/)
 1. [Autolayout and aligning subviews](https://whackylabs.com/swift/uikit/layout/vfl/2023/07/22/autolayout-align/)
+
+## FLIC
+Feedback Loop is Cool
+
+Best way to build GUI apps!
+
+### Read More
+- [FLIC - The holy grail of all GUI architectures](https://whackylabs.com/swift/uikit/architecture/2023/08/03/flic-uikit/)
