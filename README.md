@@ -2,11 +2,12 @@
 
 Simple utilities for getting things done.
 
-## SimpleLayoutEngine
-A simplistic layout engine.
+## SLE
+Simple Layout Engine
+
+A simplistic layout engine. Think what if `CGRectDivide()` went all the way.
 
 ### Usage:
-
 ```swift
 let layout = Layout(parentFrame: frame, direction: .column)
 try layout.add(item: .flexible)
@@ -25,10 +26,9 @@ addSubview(SLECreateView(bottomFrame, .blue))
 ## VFL
 Visual Formatting Language
 
-Simple wrapper around Apple's ascii based constraints.
+Simple wrapper around Apple's ascii based constraints. But also stateful.
 
 ### Usage:
-
 ```swift
 VFL(self)
   .add(subview: MyView(), name: "view")
@@ -70,6 +70,36 @@ VFL(self)
 Feedback Loop is Cool
 
 Best way to build GUI apps!
+
+### Usage
+```swift
+enum AsyncViewModel {
+  case loading
+  case success(UIView)
+  case error(AppError)
+}
+
+class AsyncView: View<AsyncViewModel>, ContentViewBindable {
+  var contentView: UIView { self }
+  
+  override func setUp() {
+    super.setUp()
+    backgroundColor = .white
+  }
+  
+  override func viewModelDidUpdate() {
+    super.viewModelDidUpdate()
+    switch viewModel {
+    case .loading:
+      self.view = LoadingView(true)
+    case .success(let view):
+      self.view = view
+    case .error(let error):
+      self.view = ErrorView(error)      
+    }
+  }
+}
+```
 
 ### Read More
 - [FLIC - The holy grail of all GUI architectures](https://whackylabs.com/swift/uikit/architecture/2023/08/03/flic-uikit/)
