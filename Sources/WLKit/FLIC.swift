@@ -1,9 +1,7 @@
 #if os(macOS)
 import AppKit
-public typealias OSView = NSView
 #else
 import UIKit
-public typealias OSView = UIView
 #endif
 
 /// Any event
@@ -11,11 +9,11 @@ public protocol ViewEvent {}
 
 /// Any event handler
 public protocol ViewEventHandler: AnyObject {
-  func handle(event: ViewEvent, sender: OSView?)
+  func handle(event: ViewEvent, sender: WLView?)
 }
 
 /// Any view that can emit event
-open class EventView: OSView {
+open class EventView: WLView {
   public weak var eventHandler: ViewEventHandler? {
     didSet {
       subviews.forEach { forwardEventHandlerToSubview($0) }
@@ -31,12 +29,12 @@ open class EventView: OSView {
     fatalError("init(coder:) has not been implemented")
   }
   
-  open override func didAddSubview(_ subview: UIView) {
+  open override func didAddSubview(_ subview: WLView) {
     super.didAddSubview(subview)
     forwardEventHandlerToSubview(subview)
   }
   
-  private func forwardEventHandlerToSubview(_ subview: UIView) {
+  private func forwardEventHandlerToSubview(_ subview: WLView) {
     guard let eventVw = subview as? EventView else { return }
     guard eventVw.eventHandler == nil else { return }
     eventVw.eventHandler = eventHandler
@@ -95,6 +93,55 @@ open class View<ViewModel>: EventView {
   open func setUp() {}
   
   open func viewModelDidUpdate() {}
+}
+
+/// Any view controller with a view model
+open class ViewController<ViewModel>: WLViewController {
+  
+  public init(_ viewModel: ViewModel) {
+    self.viewModel = viewModel
+    isSetUp = false
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  public required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  public var viewModel: ViewModel {
+    didSet {
+      if isSetUp {
+        viewModelDidUpdate()
+      }
+    }
+  }
+  
+  public private(set) var isSetUp: Bool
+
+#if os(macOS)
+  open override func viewDidLayout() {
+    super.viewDidLayout()
+    setUpIfNeeded()
+  }
+#else
+  open override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    setUpIfNeeded()
+  }
+#endif
+
+  private func setUpIfNeeded() {
+    if !isSetUp {
+      isSetUp = true
+      setUp()
+      viewModelDidUpdate()
+    }
+  }
+
+  open func setUp() {}
+
+  open func viewModelDidUpdate() {}
+
 }
 
 #if !os(macOS)
