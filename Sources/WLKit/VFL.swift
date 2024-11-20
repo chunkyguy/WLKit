@@ -1,35 +1,29 @@
-//
-//  VFL.swift
-//  Created by Sidharth Juyal on 31/12/2022.
-//
 #if os(macOS)
 import AppKit
-public typealias VFLView = NSView
 #else
 import UIKit
-public typealias VFLView = UIView
 #endif
 
 public class VFL {
-  public private(set) var views: [String: VFLView] = [:]
-  public private(set) var parentView: VFLView?
+  public private(set) var views: [String: WLView] = [:]
+  public private(set) var parentView: WLView?
   public private(set) var options: NSLayoutConstraint.FormatOptions = []
   public private(set) var metrics: [String: CGFloat] = [:]
   public private(set) var constraints: [NSLayoutConstraint] = []
   public private(set) var formats:[String: [String]] = [:]
   
-  public init(_ view: VFLView? = nil) {
+  public init(_ view: WLView? = nil) {
     parentView = view
   }
 
   @discardableResult
-  public func setParent(_ view: VFLView) -> VFL {
+  public func setParent(_ view: WLView) -> VFL {
     parentView = view
     return self
   }
 
   @discardableResult
-  public func add(subview: VFLView, name: String) -> VFL {
+  public func add(subview: WLView, name: String) -> VFL {
     addSubview(subview)
     subview.translatesAutoresizingMaskIntoConstraints = false
     views[name] = subview
@@ -37,7 +31,7 @@ public class VFL {
   }
   
   @discardableResult
-  public func addSubview(_ subview: VFLView) -> VFL {
+  public func addSubview(_ subview: WLView) -> VFL {
     assert(parentView != nil)
     parentView?.addSubview(subview)
     return self
